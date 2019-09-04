@@ -12,8 +12,6 @@ RUN apt-get -y install vim git curl mysql-client build-essential checkinstall cm
 # nodejs install
 RUN git clone https://github.com/creationix/nvm.git ~/.nvm
 RUN echo "source /root/.nvm/nvm.sh" >> /root/.bashrc
-RUN ["/bin/bash", "-c", " \
-      source /root/.nvm/nvm.sh; \
-      nvm install 9.11.2;" npm i -g opencv4node]
+RUN ["source /root/.nvm/nvm.sh; nvm install 9.11.2; npm i -g opencv4node"]
 
 CMD ["tail -f /dev/null"]
