@@ -4,6 +4,8 @@ MAINTAINER "htanaka0828" <htanaka0828@gmail.com>
 # tzdata で止まっちゃう対策
 ENV DEBIAN_FRONTEND=noninteractive
 
+WORKDIR /usr/local/src
+
 RUN apt-get -y update
 
 # package install
@@ -20,23 +22,24 @@ RUN add-apt-repository "deb http://security.ubuntu.com/ubuntu xenial-security ma
 RUN apt update
 RUN apt -y install libjasper1 libjasper-dev
 RUN apt-get -y install libavcodec-dev libavformat-dev libswscale-dev libv4l-dev \
+  python-dev python-numpy \
   libxvidcore-dev libx264-dev libgtk-3-dev \
   libatlas-base-dev gfortran python3.6-dev
 RUN apt -y install aptitude
 
-RUN ["cd /root; \
-  wget -O opencv.zip https://github.com/opencv/opencv/archive/4.1.1.zip; \
-  unzip opencv.zip; \
-  mv opencv-4.1.1 opencv; \
-  wget -O opencv_contrib.zip https://github.com/opencv/opencv_contrib/archive/4.1.1.zip; \
-  unzip opencv_contrib.zip; \
-  mv opencv_contrib-4.1.1 opencv_contrib; \
-  cd opencv; mkdir build; cd build; \
+
+RUN pwd
+
+RUN wget -O opencv.zip https://github.com/opencv/opencv/archive/4.1.0.zip && \
+  unzip opencv.zip && \
+  mv opencv-4.1.0 opencv && \
+  wget -O opencv_contrib.zip https://github.com/opencv/opencv_contrib/archive/4.1.0.zip && \
+  unzip opencv_contrib.zip && \
+  mv opencv_contrib-4.1.0 opencv_contrib
+
+RUN cd opencv && mkdir build && cd build && \
   cmake ../ -DCMAKE_INSTALL_PREFIX=/usr/local,\
--DOPENCV_EXTRA_MODULES_PATH=~/opencv_contrib/modules,\
 -DCMAKE_BUILD_TYPE=Release,\
--DBUILD_EXAMPLES=OFF,\
--DBUILD_DOCS=OFF,\
 -DBUILD_TESTS=OFF,\
 -DBUILD_PERF_TESTS=OFF,\
 -DBUILD_JAVA=OFF,\
@@ -73,8 +76,9 @@ RUN ["cd /root; \
 -DBUILD_opencv_xobjdetect=OFF,\
 -DBUILD_opencv_xphoto=OFF,\
 -DWITH_VTK=OFF,\
--DOPENCV_ENABLE_NONFREE=ON; \
-make -j8; \
-make install"]
+-DOPENCV_ENABLE_NONFREE=ON
+
+RUN cd opencv/build && make -j8
+RUN cd opencv/build && make install
 
 CMD ["tail", "-f", "/dev/null"]
