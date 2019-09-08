@@ -27,9 +27,6 @@ RUN apt-get -y install libavcodec-dev libavformat-dev libswscale-dev libv4l-dev 
   libatlas-base-dev gfortran python3.6-dev
 RUN apt -y install aptitude
 
-
-RUN pwd
-
 RUN wget -O opencv.zip https://github.com/opencv/opencv/archive/4.1.0.zip && \
   unzip opencv.zip && \
   mv opencv-4.1.0 opencv && \
@@ -76,9 +73,7 @@ RUN cd opencv && mkdir build && cd build && \
 -DBUILD_opencv_xobjdetect=OFF,\
 -DBUILD_opencv_xphoto=OFF,\
 -DWITH_VTK=OFF,\
--DOPENCV_ENABLE_NONFREE=ON
-
-RUN cd opencv/build && make -j8
-RUN cd opencv/build && make install
+-DOPENCV_ENABLE_NONFREE=ON && \
+make -j8 && make install
 
 CMD ["tail", "-f", "/dev/null"]
